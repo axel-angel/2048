@@ -8,6 +8,7 @@ app.listen(1337);
 
 // game manager
 var game = new gm.GameManager(4);
+game.players = 0;
 
 // on server started we can load our client.html page
 function handler(req, res) {
@@ -22,6 +23,33 @@ function generate_state() {
     'metadata': game.actuate_metadata(),
   };
 };
+
+function test_votes() {
+  var max_key = 'u';
+  var max_count = 0;
+
+  for (var key in game.votes) {
+    if (game.votes[key] > max_count) {
+      max_count = game.votes[key];
+      max_key = key;
+    }
+  }
+
+  if (max_count >= 0.5 * game.players) { // majority
+    console.log(['move to:', max_key]);
+    game.move(max_key);
+    // send the new data to the client
+    io.sockets.emit('update', generate_state());
+  }
+}
+
+// count sockets
+io.sockets.on('connect', function () {
+  game.players++;
+});
+io.sockets.on('disconnect', function () {
+  game.players--;
+});
 
 // creating a new websocket to keep the content updated without any AJAX request
 io.sockets.on('connection', function(socket) {
@@ -41,16 +69,12 @@ io.sockets.on('connection', function(socket) {
       // count the vote
       console.log('client key: '+ key);
       game.votes[key]++;
+      this.vote_count++;
       socket.set('round', game.round);
       io.sockets.emit('votes', game.votes);
 
       // test if vote is sufficient
-      if (game.votes[key] >= 3) {
-        console.log(['move to:', key]);
-        game.move(key);
-        // send the new data to the client
-        socket.volatile.emit('update', generate_state());
-      }
+      test_votes();
     });
   });
 });

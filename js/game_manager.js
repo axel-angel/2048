@@ -61,6 +61,7 @@ GameManager.prototype.setup = function () {
 
 GameManager.prototype.reset_vote = function () {
   this.votes = { 'u':0, 'r':0, 'd':0, 'l':0, 'reset':0 };
+  this.vote_count = 0;
 };
 
 // Set up the initial tiles to start the game with
