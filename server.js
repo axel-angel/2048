@@ -30,16 +30,27 @@ io.sockets.on('connection', function(socket) {
 
   // receiving input from client
   socket.on('key', function (data) {
-    var key = data.key;
-    if ([ 'u', 'l', 'd', 'r', 'reset' ].indexOf(key) == -1) { return; }
-    console.log('client key: '+ key);
-    game.votes[key]++;
-    io.sockets.emit('votes', game.votes);
-    if (game.votes[key] >= 3) {
-      console.log(['move to:', key]);
-      game.move(key);
-      // send the new data to the client
-      socket.volatile.emit('update', generate_state());
-    }
+    socket.get('round', function (err, value) {
+      var key = data.key;
+      if ([ 'u', 'l', 'd', 'r', 'reset' ].indexOf(key) == -1)
+        return; // invalid vote
+
+      if (value != null && value >= game.round)
+        return; // already played
+
+      // count the vote
+      console.log('client key: '+ key);
+      game.votes[key]++;
+      socket.set('round', game.round);
+      io.sockets.emit('votes', game.votes);
+
+      // test if vote is sufficient
+      if (game.votes[key] >= 3) {
+        console.log(['move to:', key]);
+        game.move(key);
+        // send the new data to the client
+        socket.volatile.emit('update', generate_state());
+      }
+    });
   });
 });
