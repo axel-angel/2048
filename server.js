@@ -15,25 +15,31 @@ function handler(req, res) {
   res.end("Hello World\n");
 }
 
+function generate_state() {
+  return {
+    'time': new Date(),
+    'state': game,
+    'metadata': game.actuate_metadata(),
+  };
+};
+
 // creating a new websocket to keep the content updated without any AJAX request
 io.sockets.on('connection', function(socket) {
-  // push test event
-  fs.watch(__dirname + '/example.xml', function(curr, prev) {
-    // adding the time of the last update
-    var json = {
-      'time': new Date(),
-      'state': game,
-      'metadata': game.actuate_metadata(),
-    };
-    // send the new data to the client
-    socket.volatile.emit('notification', json);
-  });
+  // send state
+  socket.emit('update', generate_state());
 
   // receiving input from client
   socket.on('key', function (data) {
     var key = data.key;
+    if ([ 'u', 'l', 'd', 'r', 'reset' ].indexOf(key) == -1) { return; }
     console.log('client key: '+ key);
     game.votes[key]++;
     io.sockets.emit('votes', game.votes);
+    if (game.votes[key] >= 3) {
+      console.log(['move to:', key]);
+      game.move(key);
+      // send the new data to the client
+      socket.volatile.emit('update', generate_state());
+    }
   });
 });

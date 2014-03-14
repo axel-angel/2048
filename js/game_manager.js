@@ -93,7 +93,7 @@ GameManager.prototype.actuate_metadata = function () {
     score:      this.score,
     over:       this.over,
     won:        this.won,
-    bestScore:  this.scoreManager.get(),
+    bestScore:  0, // FIXME
     terminated: this.isGameTerminated()
   };
 };
@@ -143,7 +143,7 @@ GameManager.prototype.move = function (direction) {
 
         // Only one merger per row traversal?
         if (next && next.value === tile.value && !next.mergedFrom) {
-          var merged = new Tile(positions.next, tile.value * 2);
+          var merged = new ti.Tile(positions.next, tile.value * 2);
           merged.mergedFrom = [tile, next];
 
           self.grid.insertTile(merged);
@@ -176,6 +176,9 @@ GameManager.prototype.move = function (direction) {
     }
 
     //this.actuate();
+    this.reset_vote();
+    this.round++;
+    console.log(['round moved:', this.round]);
   }
 };
 
@@ -183,10 +186,10 @@ GameManager.prototype.move = function (direction) {
 GameManager.prototype.getVector = function (direction) {
   // Vectors representing tile movement
   var map = {
-    0: { x: 0,  y: -1 }, // up
-    1: { x: 1,  y: 0 },  // right
-    2: { x: 0,  y: 1 },  // down
-    3: { x: -1, y: 0 }   // left
+    'u': { x: 0,  y: -1 }, // up
+    'r': { x: 1,  y: 0 },  // right
+    'd': { x: 0,  y: 1 },  // down
+    'l': { x: -1, y: 0 }   // left
   };
 
   return map[direction];
@@ -233,6 +236,7 @@ GameManager.prototype.tileMatchesAvailable = function () {
   var self = this;
 
   var tile;
+  var directions = [ 'u', 'l', 'd', 'r' ];
 
   for (var x = 0; x < this.size; x++) {
     for (var y = 0; y < this.size; y++) {
@@ -240,7 +244,7 @@ GameManager.prototype.tileMatchesAvailable = function () {
 
       if (tile) {
         for (var direction = 0; direction < 4; direction++) {
-          var vector = self.getVector(direction);
+          var vector = self.getVector(directions[direction]);
           var cell   = { x: x + vector.x, y: y + vector.y };
 
           var other  = self.grid.cellContent(cell);

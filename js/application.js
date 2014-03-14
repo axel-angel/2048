@@ -7,7 +7,7 @@ window.requestAnimationFrame(function () {
     var kb = new KeyboardInputManager(socket);
 
     // on every message recived we print the new datas inside the #container div
-    socket.on('notification', function (data) {
+    socket.on('update', function (data) {
         // convert the json string into a valid javascript object
         console.log(['data', data]);
         $('#container').html(data.time);
