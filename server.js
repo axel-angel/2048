@@ -35,7 +35,17 @@ function test_votes() {
     }
   }
 
-  if (max_count >= 0.5 * game.players) { // majority
+  var majority = max_count <= 0.5 * game.players;
+  var key = null;
+  if (game.vote_count >= game.players && !majority) { // stuck
+    console.log('stuck');
+    key = 'u';
+  }
+  else if (majority) { // majority
+    key = max_key;
+  }
+
+  if (key != null) {
     console.log(['move to:', max_key]);
     game.move(max_key);
     // send the new data to the client
