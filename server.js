@@ -18,10 +18,10 @@ function handler(req, res) {
 
 function generate_state() {
   return {
-    'time': new Date(),
     'state': game,
     'metadata': game.actuate_metadata(),
     'connected': game_players(),
+    'round': game.round,
   };
 };
 
