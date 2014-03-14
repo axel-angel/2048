@@ -95,7 +95,9 @@ GameManager.prototype.actuate_metadata = function () {
     over:       this.over,
     won:        this.won,
     bestScore:  0, // FIXME
-    terminated: this.isGameTerminated()
+    terminated: this.isGameTerminated(),
+    voted:      this.vote_count,
+    votes:      this.votes,
   };
 };
 

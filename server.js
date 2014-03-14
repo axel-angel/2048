@@ -22,7 +22,6 @@ function generate_state() {
     'state': game,
     'metadata': game.actuate_metadata(),
     'connected': game_players(),
-    'voted': game.vote_count,
   };
 };
 
@@ -77,7 +76,7 @@ io.sockets.on('connection', function(socket) {
       game.votes[key]++;
       this.vote_count++;
       socket.set('round', game.round);
-      io.sockets.emit('votes', game.votes);
+      io.sockets.emit('votes', game.actuate_metadata());
 
       // test if vote is sufficient
       test_votes();
