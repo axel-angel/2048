@@ -10,7 +10,7 @@ window.requestAnimationFrame(function () {
     socket.on('update', function (data) {
         // convert the json string into a valid javascript object
         console.log(['data', data]);
-        $('#container').html(data.time);
+        $('#cdate').html(data.time);
 
         actuator.actuate(data.state.grid, data.metadata);
     });
