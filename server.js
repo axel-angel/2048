@@ -8,7 +8,7 @@ app.listen(1337);
 
 // game manager
 var game = new gm.GameManager(4);
-game.players = 0;
+function game_players() { return io.sockets.clients().length; }
 
 // on server started we can load our client.html page
 function handler(req, res) {
@@ -21,6 +21,8 @@ function generate_state() {
     'time': new Date(),
     'state': game,
     'metadata': game.actuate_metadata(),
+    'connected': game_players(),
+    'voted': game.vote_count,
   };
 };
 
@@ -35,9 +37,10 @@ function test_votes() {
     }
   }
 
-  var majority = max_count <= 0.5 * game.players;
+  var majority = max_count >= 0.5 * game_players();
   var key = null;
-  if (game.vote_count >= game.players && !majority) { // stuck
+  console.log(['test_vote', max_count, game_players(), game.vote_count, majority]);
+  if (game.vote_count >= game_players() && !majority) { // stuck
     console.log('stuck');
     key = 'u';
   }
@@ -53,13 +56,6 @@ function test_votes() {
   }
 }
 
-// count sockets
-io.sockets.on('connect', function () {
-  game.players++;
-});
-io.sockets.on('disconnect', function () {
-  game.players--;
-});
 
 // creating a new websocket to keep the content updated without any AJAX request
 io.sockets.on('connection', function(socket) {

@@ -11,15 +11,16 @@ window.requestAnimationFrame(function () {
         // convert the json string into a valid javascript object
         console.log(['data', data]);
         $('#cdate').html(data.time);
+        $('#vote-up').html(data.u);
+        $('#vote-right').html(data.r);
+        $('#vote-down').html(data.d);
+        $('#vote-left').html(data.l);
+        $('#vote-reset').html(data.reset);
+        $('#vote-players').html(data.connected);
+        $('#vote-count').html(data.voted);
 
         actuator.actuate(data.state.grid, data.metadata);
     });
     socket.on('votes', function (data) {
-      console.log(['votes', data]);
-      $('#vote-up').html(data.u);
-      $('#vote-right').html(data.r);
-      $('#vote-down').html(data.d);
-      $('#vote-left').html(data.l);
-      $('#vote-reset').html(data.reset);
     });
 });
