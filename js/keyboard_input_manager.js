@@ -1,5 +1,6 @@
-function KeyboardInputManager() {
+function KeyboardInputManager(socket) {
   this.events = {};
+  this.socket = socket;
 
   this.listen();
 }
@@ -12,30 +13,26 @@ KeyboardInputManager.prototype.on = function (event, callback) {
 };
 
 KeyboardInputManager.prototype.emit = function (event, data) {
-  var callbacks = this.events[event];
-  if (callbacks) {
-    callbacks.forEach(function (callback) {
-      callback(data);
-    });
-  }
+    console.log(['emit', event, data]);
+    this.socket.emit('key', { 'key': data });
 };
 
 KeyboardInputManager.prototype.listen = function () {
   var self = this;
 
   var map = {
-    38: 0, // Up
-    39: 1, // Right
-    40: 2, // Down
-    37: 3, // Left
-    75: 0, // vim keybindings
-    76: 1,
-    74: 2,
-    72: 3,
-    87: 0, // W
-    68: 1, // D
-    83: 2, // S
-    65: 3  // A
+    38: 'u', // Up
+    39: 'r', // Right
+    40: 'd', // Down
+    37: 'l', // Left
+    75: 'u', // vim keybindings
+    76: 'r',
+    74: 'd',
+    72: 'l',
+    87: 'u', // W
+    68: 'r', // D
+    83: 'd', // S
+    65: 'l'  // A
   };
 
   document.addEventListener("keydown", function (event) {

@@ -4,7 +4,7 @@ var ti = require('./tile.js');
 function GameManager(size, ScoreManager) {
   this.size         = size; // Size of the grid
   //this.inputManager = new InputManager;
-  this.scoreManager = new ScoreManager;
+  //this.scoreManager = new ScoreManager;
   //this.actuator     = new Actuator;
 
   this.startTiles   = 2;
@@ -47,11 +47,20 @@ GameManager.prototype.setup = function () {
   this.won         = false;
   this.keepPlaying = false;
 
+  // count the votes
+  this.round = 0;
+  this.reset_vote();
+
+
   // Add the initial tiles
   this.addStartTiles();
 
   // Update the actuator
   //this.actuate();
+};
+
+GameManager.prototype.reset_vote = function () {
+  this.votes = { 'u':0, 'r':0, 'd':0, 'l':0, 'reset':0 };
 };
 
 // Set up the initial tiles to start the game with
@@ -77,17 +86,17 @@ GameManager.prototype.actuate = function () {
   if (this.scoreManager.get() < this.score) {
     this.scoreManager.set(this.score);
   }
+ */
 
-  this.actuator.actuate(this.grid, {
+GameManager.prototype.actuate_metadata = function () {
+  return {
     score:      this.score,
     over:       this.over,
     won:        this.won,
     bestScore:  this.scoreManager.get(),
     terminated: this.isGameTerminated()
-  });
-
+  };
 };
-*/
 
 // Save all tile positions and remove merger info
 GameManager.prototype.prepareTiles = function () {
