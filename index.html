@@ -78,6 +78,14 @@
     </p>
   </div>
 
+  <script>
+    // bypass NodeJS specifics
+    var exports = {};
+    var require = function () { return window; };
+  </script>
+
+  <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+  <script src="js/socket.io.min.js"></script>
   <script src="js/animframe_polyfill.js"></script>
   <script src="js/keyboard_input_manager.js"></script>
   <script src="js/html_actuator.js"></script>
@@ -86,5 +94,17 @@
   <script src="js/local_score_manager.js"></script>
   <script src="js/game_manager.js"></script>
   <script src="js/application.js"></script>
+
+  <script>
+    // creating a new websocket
+    var socket = io.connect('http://localhost:1337');
+    // on every message recived we print the new datas inside the #container div
+    socket.on('notification', function (data) {
+        // convert the json string into a valid javascript object
+        console.log(['data', data]);
+        $('#container').html(data.time);
+    });
+  </script>
+  <div id="container">(empty)</div>
 </body>
 </html>

@@ -1,28 +1,33 @@
-function GameManager(size, InputManager, Actuator, ScoreManager) {
+var gr = require('./grid.js');
+var ti = require('./tile.js');
+
+function GameManager(size, ScoreManager) {
   this.size         = size; // Size of the grid
-  this.inputManager = new InputManager;
+  //this.inputManager = new InputManager;
   this.scoreManager = new ScoreManager;
-  this.actuator     = new Actuator;
+  //this.actuator     = new Actuator;
 
   this.startTiles   = 2;
 
+  /*
   this.inputManager.on("move", this.move.bind(this));
   this.inputManager.on("restart", this.restart.bind(this));
   this.inputManager.on("keepPlaying", this.keepPlaying.bind(this));
+  */
 
   this.setup();
 }
 
 // Restart the game
 GameManager.prototype.restart = function () {
-  this.actuator.continue();
+  //this.actuator.continue();
   this.setup();
 };
 
 // Keep playing after winning
 GameManager.prototype.keepPlaying = function () {
   this.keepPlaying = true;
-  this.actuator.continue();
+  //this.actuator.continue();
 };
 
 GameManager.prototype.isGameTerminated = function () {
@@ -35,7 +40,7 @@ GameManager.prototype.isGameTerminated = function () {
 
 // Set up the game
 GameManager.prototype.setup = function () {
-  this.grid        = new Grid(this.size);
+  this.grid        = new gr.Grid(this.size);
 
   this.score       = 0;
   this.over        = false;
@@ -46,7 +51,7 @@ GameManager.prototype.setup = function () {
   this.addStartTiles();
 
   // Update the actuator
-  this.actuate();
+  //this.actuate();
 };
 
 // Set up the initial tiles to start the game with
@@ -60,13 +65,14 @@ GameManager.prototype.addStartTiles = function () {
 GameManager.prototype.addRandomTile = function () {
   if (this.grid.cellsAvailable()) {
     var value = Math.random() < 0.9 ? 2 : 4;
-    var tile = new Tile(this.grid.randomAvailableCell(), value);
+    var tile = new ti.Tile(this.grid.randomAvailableCell(), value);
 
     this.grid.insertTile(tile);
   }
 };
 
 // Sends the updated grid to the actuator
+/*
 GameManager.prototype.actuate = function () {
   if (this.scoreManager.get() < this.score) {
     this.scoreManager.set(this.score);
@@ -81,6 +87,7 @@ GameManager.prototype.actuate = function () {
   });
 
 };
+*/
 
 // Save all tile positions and remove merger info
 GameManager.prototype.prepareTiles = function () {
@@ -159,7 +166,7 @@ GameManager.prototype.move = function (direction) {
       this.over = true; // Game over!
     }
 
-    this.actuate();
+    //this.actuate();
   }
 };
 
@@ -243,3 +250,5 @@ GameManager.prototype.tileMatchesAvailable = function () {
 GameManager.prototype.positionsEqual = function (first, second) {
   return first.x === second.x && first.y === second.y;
 };
+
+exports.GameManager = GameManager;
