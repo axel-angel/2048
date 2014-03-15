@@ -22,7 +22,7 @@ var game_setTimeout = function () {
     game.move(key);
     io.sockets.emit('update', generate_state());
     game_setTimeout();
-  }, 10000);
+  }, 60000);
 };
 game_setTimeout();
 
