@@ -70,6 +70,9 @@ io.sockets.on('connection', function(socket) {
     if (game.isGameTerminated()) {
       console.log('game restart!');
       game.restart();
+      io.sockets.clients().forEach(function (s) {
+        s.set('round', null);
+      });
       io.sockets.emit('update', generate_state());
     }
 

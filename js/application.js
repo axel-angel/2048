@@ -23,6 +23,9 @@ window.requestAnimationFrame(function () {
         $('#game-round').html(data.round);
         display_metadata(data.metadata);
 
+        if (data.round == 0) {
+            actuator.continue();
+        }
         actuator.actuate(data.state.grid, data.metadata);
     });
     socket.on('votes', function (data) {
