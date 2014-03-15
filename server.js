@@ -5,6 +5,7 @@ var app = require('http').createServer(handler),
 
 // creating the server ( localhost:8000 )
 app.listen(1337);
+io.set('log level', 1); // reduce logging
 
 // game manager
 var game = new gm.GameManager(4);
