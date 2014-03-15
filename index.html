@@ -26,16 +26,16 @@
 
   <div id="container">
       <b>Current votes</b>:
-      [Up: <span id="vote-up"></span>]
-      [Right: <span id="vote-right"></span>]
-      [Down: <span id="vote-down"></span>]
-      [Left: <span id="vote-left"></span>]
-      [Reset: <span id="vote-reset"></span>]
+      [Up: <span id="vote-up" class="counter"></span>]
+      [Right: <span id="vote-right" class="counter"></span>]
+      [Down: <span id="vote-down" class="counter"></span>]
+      [Left: <span id="vote-left" class="counter"></span>]
+      <!--[Reset: <span id="vote-reset" class="counter"></span>]-->
   </div>
 
   <div id="container">
       <b>Current votes/players</b>:
-      <span id="vote-count"></span> /
+      <span id="vote-count" class="counter"></span> /
       <span id="vote-players"></span>
   </div>
 
@@ -81,15 +81,11 @@
     </div>
 
     <p class="game-explanation">
-      <strong class="important">How to play:</strong> Use your <strong>arrow keys</strong> to move the tiles. When two tiles with the same number touch, they <strong>merge into one!</strong>
+      <strong class="important">How to play:</strong> Use your <strong>arrow keys</strong> to vote a move of the tiles. Majority is necessary or it times out and plays the most voted move. When two tiles with the same number touch, they <strong>merge into one!</strong>
     </p>
     <hr>
     <p>
-    <strong class="important">Note:</strong> This site is the official version of 2048. You can play it on your phone via <a href="http://git.io/2048">http://git.io/2048.</a> All other apps or sites are derivatives or fakes, and should be used with caution.
-    </p>
-    <hr>
-    <p>
-    Created by <a href="http://gabrielecirulli.com" target="_blank">Gabriele Cirulli.</a> Based on <a href="https://itunes.apple.com/us/app/1024!/id823499224" target="_blank">1024 by Veewo Studio</a> and conceptually similar to <a href="http://asherv.com/threes/" target="_blank">Threes by Asher Vollmer.</a>
+    Adapted by Axel Angel, source available on <a href="https://github.com/axel-angel/2048" target="_blank">GitHub</a>. Original code created by <a href="http://gabrielecirulli.com" target="_blank">Gabriele Cirulli.</a> Origin source on <a href="http://git.io/2048" target="_blank">2048</a>.
     </p>
     <p>
         <b>Round</b>:
