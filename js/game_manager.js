@@ -8,6 +8,7 @@ function GameManager(size, ScoreManager) {
   //this.actuator     = new Actuator;
 
   this.startTiles   = 2;
+  this.bestScore    = 0;
 
   /*
   this.inputManager.on("move", this.move.bind(this));
@@ -21,6 +22,7 @@ function GameManager(size, ScoreManager) {
 // Restart the game
 GameManager.prototype.restart = function () {
   //this.actuator.continue();
+  this.bestScore = Math.max(this.bestScore, this.score);
   this.setup();
 };
 
@@ -94,7 +96,7 @@ GameManager.prototype.actuate_metadata = function () {
     score:      this.score,
     over:       this.over,
     won:        this.won,
-    bestScore:  0, // FIXME
+    bestScore:  this.bestScore,
     terminated: this.isGameTerminated(),
     voted:      this.vote_count,
     votes:      this.votes,
