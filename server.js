@@ -11,10 +11,13 @@ io.set('log level', 1); // reduce logging
 var game = new gm.GameManager(4);
 function game_players() { return io.sockets.clients().length; }
 
+var timeout = 30000;
 var game_timer = null;
 var game_setTimeout = function () {
   clearTimeout(game_timer);
+
   game_timer = setTimeout(function () {
+    io.sockets.emit('timeout', { 'time': false });
     if (game_players() <= 1) return;
     var dirs = ['u', 'l', 'd', 'r'];
     var key = dirs[Math.floor(Math.random()*dirs.length)]; // random
@@ -22,7 +25,8 @@ var game_setTimeout = function () {
     game.move(key);
     io.sockets.emit('update', generate_state());
     game_setTimeout();
-  }, 60000);
+  }, timeout);
+  io.sockets.emit('timeout', { 'time': timeout });
 };
 game_setTimeout();
 

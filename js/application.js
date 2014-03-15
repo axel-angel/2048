@@ -5,6 +5,7 @@ window.requestAnimationFrame(function () {
     // creating a new websocket
     var socket = io.connect('http://localhost:1337');
     var kb = new KeyboardInputManager(socket);
+    var timer = false;
 
     // on every message recived we print the new datas inside the #container div
     var display_metadata = function (data) {
@@ -16,6 +17,8 @@ window.requestAnimationFrame(function () {
         $('#vote-reset').html(data.votes.reset);
         $('#vote-count').html(data.voted);
     };
+
+    // socket events
     socket.on('update', function (data) {
         // convert the json string into a valid javascript object
         console.log(['data', data]);
@@ -31,4 +34,19 @@ window.requestAnimationFrame(function () {
     socket.on('votes', function (data) {
         display_metadata(data);
     });
+    socket.on('timeout', function (data) {
+        timer = data.time;
+    });
+
+    // refresh timeout display
+    setInterval(function () {
+        var $el = $('#vote-timeout');
+        if (timer == false) {
+            $el.html('Off');
+        }
+        else {
+            timer -= 1000;
+            $el.html(timer / 1000.);
+        }
+    }, 1000);
 });
