@@ -36,20 +36,23 @@ function test_votes() {
     }
   }
 
-  var majority = max_count >= 0.5 * game_players();
+  var players_count = game_players();
+  var stuck = game.vote_count >= players_count;
+  var majority = max_count >= 0.5 * players_count;
   var key = null;
-  console.log(['test_vote', max_count, game_players(), game.vote_count, majority]);
-  if (game.vote_count >= game_players() && !majority) { // stuck
-    console.log('stuck');
-    key = 'u';
-  }
-  else if (majority) { // majority
+  console.log(['test_vote', max_count, players_count, game.vote_count, majority]);
+  if (majority) { // majority
     key = max_key;
+  }
+  else if (stuck) { // stuck
+    var dirs = ['u', 'l', 'd', 'r'];
+    key = dirs[Math.floor(Math.random()*dirs.length)]; // random
+    console.log(['stuck, random: ', key]);
   }
 
   if (key != null) {
-    console.log(['move to:', max_key]);
-    game.move(max_key);
+    console.log(['move to:', key]);
+    game.move(key);
     // send the new data to the client
     io.sockets.emit('update', generate_state());
   }
@@ -74,7 +77,7 @@ io.sockets.on('connection', function(socket) {
       // count the vote
       console.log('client key: '+ key);
       game.votes[key]++;
-      this.vote_count++;
+      game.vote_count++;
       socket.set('round', game.round);
       io.sockets.emit('votes', game.actuate_metadata());
 
