@@ -10,6 +10,21 @@ app.listen(1337);
 var game = new gm.GameManager(4);
 function game_players() { return io.sockets.clients().length; }
 
+var game_timer = null;
+var game_setTimeout = function () {
+  clearTimeout(game_timer);
+  game_timer = setTimeout(function () {
+    if (game_players() <= 1) return;
+    var dirs = ['u', 'l', 'd', 'r'];
+    var key = dirs[Math.floor(Math.random()*dirs.length)]; // random
+    console.log('timeout reached, random move: '+ key);
+    game.move(key);
+    io.sockets.emit('update', generate_state());
+    game_setTimeout();
+  }, 10000);
+};
+game_setTimeout();
+
 // on server started we can load our client.html page
 function handler(req, res) {
   res.writeHead(200, {'Content-Type': 'text-plain'});
@@ -52,6 +67,7 @@ function test_votes() {
 
   if (key != null) {
     console.log(['move to:', key]);
+    game_setTimeout();
     game.move(key);
     // send the new data to the client
     io.sockets.emit('update', generate_state());
