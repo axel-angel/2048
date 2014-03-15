@@ -9,7 +9,17 @@ io.set('log level', 1); // reduce logging
 
 // game manager
 var game = new gm.GameManager(4);
-function game_players() { return io.sockets.clients().length; }
+
+// remember playing players
+var playings = {};
+function game_players() {
+  var count = 0;
+  for (var key in playings) {
+    ++count;
+  }
+  return count;
+}
+function game_connected() { return io.sockets.clients().length; }
 
 var timeout = 30000;
 var game_timer = null;
@@ -50,7 +60,8 @@ function generate_state() {
   return {
     'state': game,
     'metadata': game.actuate_metadata(),
-    'connected': game_players(),
+    'connected': game_connected(),
+    'playing': game_players(),
     'round': game.round,
   };
 };
@@ -98,6 +109,12 @@ io.sockets.on('connection', function(socket) {
   // send state
   socket.emit('update', generate_state());
 
+  // remove disconnected
+  socket.on('disconnect', function () {
+    console.log('disconnect player: '+ socket.id);
+    delete playings[socket.id];
+  });
+
   // receiving input from client
   socket.on('key', function (data) {
     var key = data.key;
@@ -119,6 +136,7 @@ io.sockets.on('connection', function(socket) {
 
       // count the vote
       console.log('client key: '+ key);
+      playings[socket.id] = true; // mark player as playing
       game.votes[key]++;
       game.vote_count++;
       socket.set('round', game.round);

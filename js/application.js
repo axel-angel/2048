@@ -22,7 +22,7 @@ window.requestAnimationFrame(function () {
     socket.on('update', function (data) {
         // convert the json string into a valid javascript object
         console.log(['data', data]);
-        $('#vote-players').html(data.connected);
+        $('#vote-players').html(data.playing);
         $('#game-round').html(data.round);
         display_metadata(data.metadata);
 
