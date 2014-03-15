@@ -21,20 +21,32 @@ function game_players() {
 }
 function game_connected() { return io.sockets.clients().length; }
 
-var timeout = 30000;
+var timeout = 150;
 var game_timer = null;
 var game_setTimeout = function () {
   clearTimeout(game_timer);
 
   game_timer = setTimeout(function () {
     io.sockets.emit('timeout', { 'time': false });
-    if (game_players() <= 1) return;
+    //if (game_players() <= 1) return;
 
     var most = most_voted();
     var key = null;
     if (most.count == 0) { // play at random
       var dirs = ['u', 'l', 'd', 'r'];
-      key = dirs[Math.floor(Math.random()*dirs.length)]; // random
+      if (Math.random() < 0.95) {
+        if (Math.random() < 0.5)
+          key = 'u';
+        else
+          key = 'l';
+      }
+      else {
+        if (Math.random() < 0.5)
+          key = 'r';
+        else
+          key = 'd';
+      }
+      //key = dirs[Math.floor(Math.random()*dirs.length)]; // random
       console.log(['random: ', key]);
     }
     else {
