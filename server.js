@@ -19,9 +19,19 @@ var game_setTimeout = function () {
   game_timer = setTimeout(function () {
     io.sockets.emit('timeout', { 'time': false });
     if (game_players() <= 1) return;
-    var dirs = ['u', 'l', 'd', 'r'];
-    var key = dirs[Math.floor(Math.random()*dirs.length)]; // random
-    console.log('timeout reached, random move: '+ key);
+
+    var most = most_voted();
+    var key = null;
+    if (most.count == 0) { // play at random
+      var dirs = ['u', 'l', 'd', 'r'];
+      key = dirs[Math.floor(Math.random()*dirs.length)]; // random
+      console.log(['random: ', key]);
+    }
+    else {
+      key = most.key;
+      console.log('timeout reached, most: '+ key);
+    }
+
     game.move(key);
     io.sockets.emit('update', generate_state());
     game_setTimeout();
@@ -45,7 +55,7 @@ function generate_state() {
   };
 };
 
-function test_votes() {
+function most_voted() {
   var max_key = 'u';
   var max_count = 0;
 
@@ -56,18 +66,20 @@ function test_votes() {
     }
   }
 
+  return { 'count': max_count, 'key': max_key };
+}
+
+function test_votes() {
+
+  var most = most_voted();
   var players_count = game_players();
-  var stuck = game.vote_count >= players_count;
-  var majority = max_count >= 0.5 * players_count;
+  var stuck = (players_count > 2) && game.vote_count >= (0.8 * players_count);
+  var majority = most.count >= (0.5 * players_count);
   var key = null;
-  console.log(['test_vote', max_count, players_count, game.vote_count, majority]);
-  if (majority) { // majority
-    key = max_key;
-  }
-  else if (stuck) { // stuck
-    var dirs = ['u', 'l', 'd', 'r'];
-    key = dirs[Math.floor(Math.random()*dirs.length)]; // random
-    console.log(['stuck, random: ', key]);
+  console.log(['test_vote', most.count, players_count, game.vote_count, majority, stuck]);
+
+  if (majority || stuck) { // majority or stuck plays most voted
+    key = most.key;
   }
 
   if (key != null) {
