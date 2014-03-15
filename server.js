@@ -73,7 +73,8 @@ function test_votes() {
 
   var most = most_voted();
   var players_count = game_players();
-  var stuck = (players_count > 2) && game.vote_count >= (0.8 * players_count);
+  var players_novote = players_count - game.vote_count;
+  var stuck = (players_count > 2) && (most.count > players_novote);
   var majority = most.count >= (0.5 * players_count);
   var key = null;
   console.log(['test_vote', most.count, players_count, game.vote_count, majority, stuck]);
