@@ -66,8 +66,14 @@ io.sockets.on('connection', function(socket) {
 
   // receiving input from client
   socket.on('key', function (data) {
+    var key = data.key;
+    if (game.isGameTerminated()) {
+      console.log('game restart!');
+      game.restart();
+      io.sockets.emit('update', generate_state());
+    }
+
     socket.get('round', function (err, value) {
-      var key = data.key;
       if ([ 'u', 'l', 'd', 'r', 'reset' ].indexOf(key) == -1)
         return; // invalid vote
 
