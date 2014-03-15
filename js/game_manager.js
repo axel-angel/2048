@@ -179,10 +179,11 @@ GameManager.prototype.move = function (direction) {
     }
 
     //this.actuate();
-    this.reset_vote();
-    this.round++;
-    console.log(['round moved:', this.round]);
   }
+
+  this.reset_vote();
+  this.round++;
+  console.log(['round moved:', this.round]);
 };
 
 // Get the vector representing the chosen direction
